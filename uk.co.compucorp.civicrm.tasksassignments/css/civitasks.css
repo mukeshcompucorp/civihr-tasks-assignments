@@ -10822,6 +10822,14 @@ fieldset[disabled]
   padding: 0;
   margin: 0;
 }
+
+.page-civicrm-tasksassignments-settings #branding .page-title {
+  display: none;
+}
+.page-civicrm-tasksassignments-settings #page {
+  padding: 0;
+  margin: 0;
+}
 #civitasks.ct-page-loading, .ct-page-loading#cividocuments {
   background-color: #fff;
   z-index: 0;

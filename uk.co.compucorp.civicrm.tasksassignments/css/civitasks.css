@@ -11763,6 +11763,9 @@ fieldset[disabled]
 #civitasks .ct-page-settings, #cividocuments .ct-page-settings {
   padding: 20px;
 }
+#civitasks .ct-page-settings .radio-inline > input[type=radio], #cividocuments .ct-page-settings .radio-inline > input[type=radio] {
+  display: block;
+}
 #civitasks .ct-sidebar, #cividocuments .ct-sidebar {
   float: left;
   margin-right: -100%;

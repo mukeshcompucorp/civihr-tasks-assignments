@@ -1,9 +1,11 @@
 {assign var="module" value="cividocuments" }
 {assign var="prefix" value="ct-" }
 
-<div id="{$module}" ng-controller="MainCtrl" ct-spinner ct-spinner-show>
-    <div class="container fade-in" ui-view>
-    </div>
+<div id="bootstrap-theme">
+  <div id="{$module}" ng-controller="MainCtrl" ct-spinner ct-spinner-show>
+      <div class="container fade-in" ui-view>
+      </div>
+  </div>
 </div>
 {literal}
     <script type="text/javascript">

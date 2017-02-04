@@ -3,6 +3,7 @@
   "description": "CiviHR \"Tasks and Assignments\" extension",
   "private": true,
   "scripts": {
+    "gulp": "gulp",
     "postinstall": "bower install"
   },
   "devDependencies": {

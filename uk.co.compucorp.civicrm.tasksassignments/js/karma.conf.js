@@ -55,9 +55,6 @@ module.exports = function (config) {
     ngHtml2JsPreprocessor: {
       prependPrefix: '/base/',
       moduleName: 'tasks-assignments.templates'
-    },
-    phantomjsLauncher: {
-      exitOnResourceError: true
     }
   });
 };

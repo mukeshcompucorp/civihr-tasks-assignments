@@ -5,7 +5,7 @@ module.exports = function (config) {
 
   config.set({
     basePath: civicrmPath,
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
     frameworks: ['jasmine'],
     files: [
       // the global dependencies
@@ -55,6 +55,9 @@ module.exports = function (config) {
     ngHtml2JsPreprocessor: {
       prependPrefix: '/base/',
       moduleName: 'tasks-assignments.templates'
+    },
+    phantomjsLauncher: {
+      exitOnResourceError: true
     }
   });
 };

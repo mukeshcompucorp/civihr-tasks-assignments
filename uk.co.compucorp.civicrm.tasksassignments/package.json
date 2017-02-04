@@ -15,9 +15,9 @@
     "gulp-sass-bulk-import": "~1.0.1",
     "jasmine-core": "~2.5.2",
     "karma": "~1.4.1",
-    "karma-chrome-launcher": "~2.0.0",
     "karma-jasmine": "~1.1.0",
     "karma-ng-html2js-preprocessor": "~1.0.0",
+    "karma-phantomjs-launcher": "~1.0.2",
     "karma-requirejs": "~1.1.0",
     "path": "~0.12.7",
     "requirejs": "~2.3.2"

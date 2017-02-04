@@ -20,8 +20,8 @@ gulp.task('sass', function (done) {
 });
 
 gulp.task('requirejs-bundle', function (done) {
-  exec('r.js -o js/build.js', function (err, stdout, stderr) {
-    err && err.code && console.log(stdout);
+  exec(__dirname + '/node_modules/.bin/r.js -o js/build.js', function (err, stdout, stderr) {
+    err && err.code && console.log(stdout || stderr);
     done();
   });
 });

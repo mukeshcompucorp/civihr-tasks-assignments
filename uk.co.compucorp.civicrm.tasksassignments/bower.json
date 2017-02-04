@@ -1,0 +1,17 @@
+{
+  "name": "civihr-taskassignments",
+  "description": "CiviHR \"Tasks and Assignments\" extension",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "js/src/tasks-assignments/vendor/",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "angular-ui-router": "~0.2.0",
+    "checklist-model": "~0.10.0"
+  }
+}

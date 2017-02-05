@@ -10,7 +10,7 @@
     "test",
     "tests"
   ],
-  "devDependencies": {
+  "dependencies": {
     "angular-ui-router": "~0.2.0",
     "checklist-model": "~0.10.0"
   }

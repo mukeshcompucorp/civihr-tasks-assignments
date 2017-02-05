@@ -1,5 +1,6 @@
 define([
     'common/angular',
+    'common/angularFileUpload',
     'common/ui-select',
     'common/modules/xeditable-civi',
     'tasks-assignments/vendor/angular-bootstrap-calendar',

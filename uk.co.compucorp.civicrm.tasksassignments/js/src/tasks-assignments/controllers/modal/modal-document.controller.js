@@ -187,22 +187,23 @@ define([
           return;
         }
 
-        var uploader = vm.uploader;
-        var filesTrash = vm.filesTrash;
-        var promiseFilesDelete = [];
+        var documentStatus = vm.document.status_id;
         var file;
+        var promiseFilesDelete = [];
 
         $scope.$broadcast('ct-spinner-show');
+
+        documentStatus = vm.isRole('admin') ? '3' : (vm.files.length || vm.uploader.queue.length ? '2' : '1');
 
         // temporary remove case_id
         +doc.case_id === +data.case_id && delete doc.case_id;
         doc.activity_date_time = vm.parseDate(doc.activity_date_time) || '';
         doc.expire_date = vm.parseDate(doc.expire_date);
-        doc.status_id = !vm.isRole('admin') ? '2' : vm.document.status_id; // 2 => 'Awaiting Approval'
+        doc.status_id = documentStatus;
 
-        if (filesTrash.length) {
-          for (var i = 0; i < filesTrash.length; i++) {
-            file = filesTrash[i];
+        if (vm.filesTrash.length) {
+          for (var i = 0; i < vm.filesTrash.length; i++) {
+            file = vm.filesTrash[i];
             promiseFilesDelete.push(FileService.delete(file.fileID, file.entityID, file.entityTable));
           }
         }
@@ -211,7 +212,7 @@ define([
           document: DocumentService.save(doc),
           files: promiseFilesDelete.length ? $q.all(promiseFilesDelete) : []
         }).then(function (result) {
-          if (uploader.queue.length) {
+          if (vm.uploader.queue.length) {
             var modalInstance = $modal.open({
               appendTo: $rootElement.find('div').eq(0),
               templateUrl: config.path.TPL + '/modal/progress.html?v=1',
@@ -219,7 +220,7 @@ define([
               controller: 'ModalProgressCtrl',
               resolve: {
                 uploader: function () {
-                  return uploader;
+                  return vm.uploader;
                 },
                 entityId: function () {
                   return result.document.id;
@@ -233,32 +234,13 @@ define([
 
           return result;
         }).then(function (result) {
-          if (result.files.length && !!result.files[0].result) {
-            DocumentService.save({
-              id: result.document.id,
-              status_id: '1' // 1 => 'awaiting upload'
-            }).then(function (results) {
-              vm.document.status_id = results.status_id;
-              $modalInstance.close(vm.document);
-            });
-          } else if (result.files.length && !!result.files[0].values[0].result) {
-            DocumentService.save({
-              id: result.document.id,
-              status_id: vm.isRole('admin') ? '3' : '1' // 3 => 'approved', 1 => 'awaiting upload'
-            }).then(function (results) {
-              vm.document.status_id = results.status_id;
-              $modalInstance.close(vm.document);
-            });
-          } else {
-            $modalInstance.close(vm.document);
-          }
-
-          vm.document.id = result.document.id;
           vm.document.case_id = result.document.case_id;
-          vm.document.file_count = vm.files.length + uploader.queue.length;
+          vm.document.file_count = vm.files.length + vm.uploader.queue.length;
+          vm.document.id = result.document.id;
+          vm.document.status_id = result.status_id;
 
           AssignmentService.updateTab();
-
+          $modalInstance.close(vm.document);
           $rootScope.$broadcast('document-saved');
           $scope.$broadcast('ta-spinner-hide');
         }, function (reason) {

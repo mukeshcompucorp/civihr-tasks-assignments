@@ -3,12 +3,13 @@
 define([
   'common/angular',
   'common/moment',
+  'common/lodash',
   'tasks-assignments/controllers/controllers',
   'tasks-assignments/services/contact',
   'tasks-assignments/services/document',
   'tasks-assignments/services/file',
   'tasks-assignments/services/assignment'
-], function (angular, moment, controllers) {
+], function (angular, moment, _, controllers) {
   'use strict';
 
   controllers.controller('DocumentListCtrl', ['$scope', '$uibModal', '$dialog', '$rootElement', '$rootScope', '$state', '$filter',
@@ -21,6 +22,10 @@ define([
 
       $scope.dueThisWeek = 0;
       $scope.dueToday = 0;
+
+      $scope.propertyName = 'activity-date-time';
+      $scope.reverse = true;
+
       $scope.list = documentList;
       $scope.listFiltered = [];
       $scope.listOngoing = [];
@@ -71,6 +76,68 @@ define([
         currentPage: 1,
         itemsPerPage: 10,
         maxSize: 5
+      };
+
+      /**
+       * Sort the document list based on the property type
+       * @param  {string} propertyName
+       * @return {array}
+       */
+      $scope.sortBy = function (propertyName) {
+        $scope.reverse = ($scope.propertyName === propertyName) ? !$scope.reverse : false;
+        $scope.propertyName = propertyName;
+
+        switch (propertyName) {
+          case 'type':
+            $scope.list = _.sortBy($scope.list, function (doc) {
+              return $rootScope.cache.documentType.obj[doc.activity_type_id];
+            });
+            break;
+          case 'status_id':
+            $scope.list = _.sortBy($scope.list, function (doc) {
+              return $rootScope.cache.documentStatus.obj[doc.status_id];
+            });
+            break;
+          case 'target_contact':
+            $scope.list = _.sortBy($scope.list, function (doc) {
+              return $rootScope.cache.contact.obj[doc.target_contact_id[0]].sort_name;
+            });
+            break;
+          case 'assignee':
+            $scope.list = _.sortBy($scope.list, function (doc) {
+              var assignee = doc.assignee_contact_id.length && _.find($rootScope.cache.contact.obj, {'id': doc.assignee_contact_id[0]});
+
+              return assignee && assignee.sort_name;
+            });
+            break;
+          case 'case_id':
+            $scope.list = _.sortBy($scope.list, function (doc) {
+              var assignment = $rootScope.cache.assignment.obj[doc.case_id];
+              var assignmentType = assignment && $rootScope.cache.assignmentType.obj[assignment.case_type_id];
+
+              return assignmentType && assignmentType.title;
+            });
+            break;
+        }
+      };
+
+      /**
+       * Creates the comma saperated list of assignees
+       * @param  {array} assigneesIds
+       * @return {string}
+       */
+      $scope.concatAssignees = function (assigneesIds) {
+        var assigneeList = [];
+
+        if (assigneesIds.length) {
+          _.each(assigneesIds, function (assigneeId) {
+            var assignee = _.find($rootScope.cache.contact.obj, {'contact_id': assigneeId});
+
+            assignee && assigneeList.push(assignee.sort_name.replace(',', ''));
+          });
+        }
+
+        return assigneeList.toString();
       };
 
       /**

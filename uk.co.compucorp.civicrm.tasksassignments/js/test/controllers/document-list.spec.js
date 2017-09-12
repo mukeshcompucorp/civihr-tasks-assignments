@@ -151,6 +151,8 @@ define([
     });
 
     describe('sortBy', function () {
+      var sortedDocumentList;
+
       beforeEach(function () {
         initController();
 
@@ -170,59 +172,59 @@ define([
         $rootScope.cache.assignment.obj = assignmentFabricator.listAssignments();
       });
 
-      describe('documents are not sorted', function () {
-        it('lists unsorted document list', function () {
-          expect($scope.list[0].id).toBe('1200');
-          expect($scope.list[4].id).toBe('1213');
-        });
+      afterEach(function () {
+        $rootScope.$apply();
       });
 
       describe('document are sorted by docuument type', function () {
         beforeEach(function () {
+          sortedDocumentList = _.sortBy($scope.list, function (doc) {
+            return $rootScope.cache.documentType.obj[doc.activity_type_id];
+          });
+
           $scope.sortBy('type');
         });
 
-        afterEach(function () {
-          $rootScope.$apply();
-        });
-
         it('lists documents by types', function () {
-          expect($scope.list[0].id).toBe('1213');
+          expect($scope.list).toEqual(sortedDocumentList);
           expect($scope.list[4].id).toBe('1200');
         });
       });
 
       describe('documents are sorted by document status', function () {
-        afterEach(function () {
-          $rootScope.$apply();
-        });
         beforeEach(function () {
+          sortedDocumentList = _.sortBy($scope.list, function (doc) {
+            return $rootScope.cache.documentStatus.obj[doc.status_id];
+          });
           $scope.sortBy('status_id');
         });
 
         it('lists documents by document status', function () {
-          expect($scope.list[0].id).toBe('1210');
-          expect($scope.list[4].id).toBe('1200');
+          expect($scope.list).toEqual(sortedDocumentList);
         });
       });
 
       describe('document are sorted by document staff/target contact', function () {
-        afterEach(function () {
-          $rootScope.$apply();
-        });
-
         beforeEach(function () {
+          sortedDocumentList = _.sortBy($scope.list, function (doc) {
+            return $rootScope.cache.contact.obj[doc.target_contact_id[0]].sort_name;
+          });
+
           $scope.sortBy('target_contact');
         });
 
         it('lists documents by target contact/staff ', function () {
-          expect($scope.list[0].id).toBe('1200');
-          expect($scope.list[4].id).toBe('1205');
+          expect($scope.list).toEqual(sortedDocumentList);
         });
       });
 
       describe('documents are sorted by assignees', function () {
         beforeEach(function () {
+          sortedDocumentList = _.sortBy($scope.list, function (doc) {
+            var assignee = doc.assignee_contact_id.length && _.find($rootScope.cache.contact.obj, {'id': doc.assignee_contact_id[0]});
+
+            return assignee && assignee.sort_name;
+          });
           $scope.sortBy('assignee');
         });
 
@@ -231,23 +233,24 @@ define([
         });
 
         it('lists documents by assignees', function () {
-          expect($scope.list[0].id).toBe('1200');
-          expect($scope.list[4].id).toBe('1213');
+          expect($scope.list).toEqual(sortedDocumentList);
         });
       });
 
       describe('documents are sorted by assignment type', function () {
         beforeEach(function () {
+          sortedDocumentList = _.sortBy($scope.list, function (doc) {
+            var assignment = $rootScope.cache.assignment.obj[doc.case_id];
+            var assignmentType = assignment && $rootScope.cache.assignmentType.obj[assignment.case_type_id];
+
+            return assignmentType && assignmentType.title;
+          });
+
           $scope.sortBy('case_id');
         });
 
-        afterEach(function () {
-          $rootScope.$apply();
-        });
-
         it('lists documents by assignment type', function () {
-          expect($scope.list[0].id).toBe('1205');
-          expect($scope.list[4].id).toBe('1210');
+          expect($scope.list).toEqual(sortedDocumentList);
         });
       });
     });

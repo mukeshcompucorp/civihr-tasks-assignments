@@ -187,7 +187,6 @@ define([
 
         it('lists documents by types', function () {
           expect($scope.list).toEqual(sortedDocumentList);
-          expect($scope.list[4].id).toBe('1200');
         });
       });
 

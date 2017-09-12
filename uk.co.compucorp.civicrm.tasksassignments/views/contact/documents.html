@@ -47,20 +47,20 @@
         <table class="table table-striped {{prefix}}table-documents">
           <thead>
             <tr>
-              <th>Type</th>
-              <th>Contact</th>
-              <th ng-if="settings.extEnabled.assignments">Assignment</th>
-              <th>Due Date</th>
-              <th>Expiry Date</th>
-              <th>Status</th>
-              <th></th>
+              <th ng-repeat="column in documentContactColumns"
+                ng-click="sortBy(column.property)"
+                ng-if="column.condition != undefined ? column.condition : true">
+                  <span class="sortorder" ng-if="propertyName === column.property" ng-class="{reverse: reverse}"></span>
+                  {{ column.label }}
+              </th>
+              <th colspan="2"></th>
             </tr>
           </thead>
           <tbody>
             <tr ng-repeat="document in listOngoing = (listFiltered = (list
                 | filterByStatus:filterParams.documentStatus
                 | filterByAssignmentType:filterParams.assignmentType
-                | orderBy: 'activity_date_time'))"
+                | orderBy:propertyName:reverse))"
               ng-controller="DocumentCtrl"
               ng-include src="'document.html'">
             </tr>
@@ -75,11 +75,14 @@
   <td>
     <a ng-href="{{urlFile}}" ng-click="(!document.file_count || document.file_count == '0') && modalDocument('edit', document, $event);" ng-bind="cache.documentType.obj[document.activity_type_id]"></a>
   </td>
-  <td>
-    <a ng-href="{{url.CONTACT+'?reset=1&cid='+cache.contact.obj[document.assignee_contact_id[0]].id}}" ng-bind="cache.contact.obj[document.assignee_contact_id[0]].sort_name"></a>
+  <td ng-bind="(document.document_number) || '-'"></td>
+  <td ng-if="document.assignee_contact_id">
+    <a ng-repeat="(key, value) in listAssignees(document.assignee_contact_id)" ng-href="{{url.CONTACT+'?reset=1&cid='+cache.contact.obj[key].contact_id}}">
+      {{value}} {{$last ? '' : ', '}}
+    </a>
   </td>
   <td ng-if="settings.extEnabled.assignments" ng-bind="(cache.assignmentType.obj[cache.assignment.obj[document.case_id].case_type_id].title || '-')"></td>
-  <td ng-bind="(document.activity_date_time | date: 'dd/MM/yyyy') || '-'"></td>
+  <td ng-bind="(document.valid_from | date: 'dd/MM/yyyy') || '-'"></td>
   <td ng-bind="(document.expire_date | date: 'dd/MM/yyyy') || '-'"></td>
   <td>
     <div class="dropdown" uib-dropdown>
@@ -97,6 +100,7 @@
       </ul>
     </div>
   </td>
+  <td><a ng-href="{{urlFile}}"><i class="fa fa-download"></i></a></td>
   <td>
     <div class="dropdown" uib-dropdown>
       <a href class="dropdown-toggle {{prefix}}context-menu-toggle" uib-dropdown-toggle><i class="fa fa-ellipsis-v"></i></a>
